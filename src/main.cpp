@@ -112,7 +112,7 @@ void addCard(DatabaseHandler &db,std::vector <Deck> &Decks)
                     std::string question;
                     std::string choice;
                     char response;
-                    int correctChoice;
+                    std::string correctAnswer;
                     bool addingOptions = true;
                     std::cout << "Enter the question:\n";
                     std::cin.ignore(); 
@@ -130,12 +130,13 @@ void addCard(DatabaseHandler &db,std::vector <Deck> &Decks)
                             addingOptions = false;
                         std::system("clear");
                     }
-                    std::cout << "Enter the correct choice:\n";
-                    std::cin >> correctChoice;
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-                    if (correctChoice < 1 && correctChoice > newcard.getNumOfOptions())
-                        throw CustomException("Invalid choice! The correct choice index must be between 1 and " + std::to_string(newcard.getNumOfOptions()) + ".");
-                    newcard.setans(std::to_string(correctChoice));
+                    do
+                    {
+                        std::cout << "Enter the correct answer:\n";
+                        std::getline(std::cin, correctAnswer);
+                    } while (!newcard.checkExistenceClistAnswer(correctAnswer));
+
+                    newcard.setans(correctAnswer);
                     
                     std::cout << "Choose which deck you would like to store this card in?\n";
                     for (int i = 0; i < Decks.size(); i++)

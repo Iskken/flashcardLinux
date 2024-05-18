@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream> // to use std::ostringstream
-
+#include <algorithm>//for std::find
 class Flashcard {
 protected:
     std::string question;
@@ -86,6 +86,16 @@ public:
         }
     }
 
+    bool checkExistenceClistAnswer(std::string answer) const{
+        for (int i = 0; i < options.size(); i++)
+        {
+            if (std::find(options.begin(), options.end(), answer) != options.end())
+            {
+                return true;
+            } 
+        }
+        return false;
+    }
     virtual void display() const {
         std::cout << "Q: " << question << "\n" << "A: " << answer << "\n";
         std::cout << "Multiple choices:\n";

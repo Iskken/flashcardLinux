@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iostream>
 #include <cstring>
+#include <vector>
 
 Deck::Deck(const std::string &title) 
     : deck_title(title), flist(nullptr), clist(nullptr), 
