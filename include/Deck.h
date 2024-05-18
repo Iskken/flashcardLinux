@@ -22,6 +22,8 @@ public:
     {
         deck_title = new_title;
     }
+    int getNumFlist() const;
+    int getNumClist() const;
     void addFlashcard(const Flashcard &f);
     void addChoicecard(const ChoiceCard &c);
     void increaseCapacityFlist(int newCapacity);

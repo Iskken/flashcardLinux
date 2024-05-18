@@ -8,6 +8,11 @@
 
 void listDecks(std::vector<Deck> &Decks)
 {
+    if (Decks.empty())
+    {
+        std::cout << "There are no decks to review!\n";
+        return;
+    }
     int option;
     for (int i = 0; i < Decks.size(); i++)
     {
@@ -22,6 +27,8 @@ void listDecks(std::vector<Deck> &Decks)
                 throw CustomException("The chosen deck index can not be negative!\n");
             if (option > Decks.size())
                 throw CustomException("The chosen deck index is within boundaries!\n");
+            if (Decks[option-1].getNumFlist() == 0 && Decks[option-1].getNumClist() == 0)
+                throw CustomException("There are no cards in this deck!\n");
         } while (option < 1 || option > Decks.size());
         std::system("clear");
         Decks[option-1].shuffleCards();
@@ -37,10 +44,11 @@ void listDecks(std::vector<Deck> &Decks)
 void addDeck(DatabaseHandler &db, std::vector <Deck> &Decks)
 {
     std::string title;
-    std::cout << "Type the name of the new deck(can not consist of 2 separate words!):";
+    std::cout << "Type the name of the new deck:";
     try
     {
-        std::cin>>title;
+        std::cin.ignore();
+        std::getline(std::cin, title);
         std::cout << std::endl;
         if (db.insertDeck(title.c_str())) //c_str() function converts from string to const char *
         {
@@ -60,6 +68,11 @@ void addDeck(DatabaseHandler &db, std::vector <Deck> &Decks)
 
 void addCard(DatabaseHandler &db,std::vector <Deck> &Decks)
 {
+    if (Decks.empty())
+    {
+        std::cout << "There are no decks to add card into!\n";
+        return;
+    }
     int option;
     int deck_id;
     bool validInput = false;
@@ -72,7 +85,7 @@ void addCard(DatabaseHandler &db,std::vector <Deck> &Decks)
             std::cin >> option;
             if (option != 1 && option != 2)
             {
-                throw CustomException("The choice should be either 1 or 2!\n");
+                std::cerr << "The choice should be either 1 or 2!\n";
             }
             switch(option)
             {
@@ -169,6 +182,11 @@ void addCard(DatabaseHandler &db,std::vector <Deck> &Decks)
 
 void deleteDeck(DatabaseHandler &db, std::vector <Deck> &decks)
 {
+    if (decks.empty())
+    {
+        std::cout << "There are no decks to delete!\n";
+        return;
+    }
     int option;
     int deckId;
     bool validOption = false;
@@ -177,7 +195,6 @@ void deleteDeck(DatabaseHandler &db, std::vector <Deck> &decks)
     {
        std::cout << i+1 << "." << decks[i].getTitle() << "\n";
     }
-    std::cin >> option;
     while (!validOption) {
         std::cin >> option;
         if (option >= 1 && option <= decks.size()) {
@@ -199,8 +216,23 @@ void deleteDeck(DatabaseHandler &db, std::vector <Deck> &decks)
     }
 }
 
+bool checkCardsPresence(std::vector <Deck> &decks) //checks whethere there are cards to review in all of the decks
+{
+    for (const Deck &d: decks)
+    {
+        if (d.getNumFlist() > 0 || d.getNumClist() > 0)
+            return true;
+    }
+    return false;
+}
+
 void deleteCard(DatabaseHandler &db, std::vector <Deck> &decks)
 {
+    if (decks.empty() || !checkCardsPresence(decks))
+    {
+        std::cout << "There are no cards to delete!\n";
+        return;
+    }
     int option;
     bool validOption = false;
     int deckId;

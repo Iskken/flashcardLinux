@@ -75,6 +75,14 @@ void Deck::reviewDeck() const {
     std::cout << "Congratulations! You have finished the deck for now!\n";
 }
 
+int Deck::getNumFlist() const
+{
+    return number_of_cards_flist;
+}
+int Deck::getNumClist() const
+{
+    return number_of_cards_clist;
+}
 
 void Deck::increaseCapacityFlist(int newCapacity)
 {
