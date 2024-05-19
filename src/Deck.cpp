@@ -15,15 +15,46 @@ Deck::Deck(const std::string &title)
     clist = new ChoiceCard[capacity_clist];
 }
 
+Deck& Deck::operator=(const Deck &other) { //we need it for erase function to work properly 
+        if (this == &other) {
+            return *this; // handle self-assignment
+        }
+
+        // Clean up existing resources
+        delete[] flist;
+        delete[] clist;
+
+        //copying data of other object
+        deck_title = other.deck_title;
+        number_of_cards_flist = other.number_of_cards_flist;
+        number_of_cards_clist = other.number_of_cards_clist;
+        capacity_flist = other.capacity_flist;
+        capacity_clist = other.capacity_clist;
+
+        flist = new Flashcard[capacity_flist];//copying elements
+        for (int i = 0; i < number_of_cards_flist; ++i) {
+            flist[i] = other.flist[i];
+        }
+
+        clist = new ChoiceCard[capacity_clist];//copying elements
+        for (int i = 0; i < number_of_cards_clist; ++i) {
+            clist[i] = other.clist[i];
+        }
+
+        return *this;
+}
+
 Deck::Deck(const Deck &other)
     : deck_title(other.deck_title), flist(new Flashcard[other.capacity_flist]),
       clist(new ChoiceCard[other.capacity_clist]), number_of_cards_flist(other.number_of_cards_flist),
       number_of_cards_clist(other.number_of_cards_clist), capacity_flist(other.capacity_flist),
       capacity_clist(other.capacity_clist) {
+    flist = new Flashcard[capacity_flist];
     for (int i = 0; i< number_of_cards_flist; i++)
     {
         flist[i] = other.flist[i];
     }
+    clist = new ChoiceCard[capacity_clist];
     for (int i = 0; i < number_of_cards_clist; i++)
     {
         clist[i] = other.clist[i];
