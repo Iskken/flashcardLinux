@@ -6,9 +6,7 @@ DatabaseHandler::DatabaseHandler(const char *path) : dbPath(path), db(nullptr){}
 void DatabaseHandler::openDb()
 {
     int check = sqlite3_open(dbPath, &db);
-    if (check == SQLITE_OK)
-        std::cout << "Database opened successfuly\n";
-    else
+    if (check != SQLITE_OK)
         std::cerr << "Error loading database\n";
 }
 
@@ -140,6 +138,22 @@ bool DatabaseHandler::deleteFlashCard(int flash_id)
     return false;
 }
 
+bool DatabaseHandler::deleteChoiceCard(int choice_id)
+{
+    const char *sql = "DELETE FROM choicecards WHERE choice_id = ?";
+    sqlite3_stmt *stmt;
+    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    sqlite3_bind_int(stmt,  1, choice_id);
+    if (sqlite3_step(stmt) != SQLITE_DONE)
+    {
+        std::cerr << "The deletion of choicecard was not successful";
+        sqlite3_finalize(stmt);
+        return false;
+    }
+    sqlite3_finalize(stmt);
+    return false;
+}
+
 bool DatabaseHandler::insertChoiceCard(int deckID, const char *question, const char *answer, std::string enumChoices)
 {
     const char *sql1 = "SELECT deck_id FROM decks WHERE deck_id = ?;";
@@ -233,7 +247,7 @@ void DatabaseHandler::initializeDecks(std::vector<Deck> &decks){
     sqlite3_finalize(stmt);
 }
 
-int DatabaseHandler::getDeckId(const char *deckTitle)
+int DatabaseHandler::getDeckId(const char *deckTitle) const
 {
     int deck_id = 0;
     const char *sql = "SELECT deck_id FROM decks WHERE title = ?";
@@ -244,10 +258,45 @@ int DatabaseHandler::getDeckId(const char *deckTitle)
     if (rc == SQLITE_ROW) {
         deck_id = sqlite3_column_int(stmt, 0);
     } else {
-        std::cerr << "Error obtaining deck_id or no matching row found: " << sqlite3_errmsg(db) << std::endl;
+        std::cerr << "Error obtaining deck_id or no matching row found: " << std::endl;
     }
     sqlite3_finalize(stmt);
     return deck_id;
+}
+
+int DatabaseHandler::getFlashId(const char *qu) 
+{
+    const char *sql = "SELECT flash_id FROM flashcards WHERE question = ?";
+    sqlite3_stmt *stmt;
+    int flash_id = -1;
+
+    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    sqlite3_bind_text(stmt, 1, qu, -1, SQLITE_STATIC);
+    int rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+        flash_id = sqlite3_column_int(stmt, 0);
+    } else {
+        std::cerr << "Error obtaining flash_id or no matching row found: " << std::endl;
+    }
+    sqlite3_finalize(stmt);
+    return flash_id;
+}
+int DatabaseHandler::getChoiceId(const char *qu)
+{
+    const char *sql = "SELECT choice_id FROM choicecards WHERE question = ?";
+    sqlite3_stmt *stmt;
+    int choice_id;
+
+    sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    sqlite3_bind_text(stmt, 1, qu, -1, SQLITE_STATIC);
+    int rc = sqlite3_step(stmt);
+    if (rc == SQLITE_ROW) {
+        choice_id = sqlite3_column_int(stmt, 0);
+    } else {
+        std::cerr << "Error obtaining flash_id or no matching row found: " << std::endl;
+    }
+    sqlite3_finalize(stmt);
+    return choice_id;
 }
 
 void DatabaseHandler::closeDb()

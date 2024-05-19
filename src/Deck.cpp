@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <thread>
 
 Deck::Deck(const std::string &title) 
     : deck_title(title), flist(nullptr), clist(nullptr), 
@@ -39,14 +40,12 @@ void Deck::shuffleCards() //function to shuffle cards of both types
 
 void KeyPress(char expected) {
     char key_pressed;
-    while (true) {
-        std::cin >> key_pressed;
-        if (tolower(key_pressed) != expected) {
+    do
+    {
+        std::cin>>key_pressed;
+        if (tolower(key_pressed) != expected)
             std::cerr << "Wrong key pressed. Try again!\n";
-        } else {
-            break;
-        }
-    }
+    } while (tolower(key_pressed) != expected);
 }
 
 void Deck::reviewDeck() const {
@@ -63,7 +62,7 @@ void Deck::reviewDeck() const {
         std::vector<std::string> options = clist[i].getChoices();
         std::cout << "Question:" << clist[i].getqu() << "\n";
         for (int j = 0; j < options.size(); j++) {
-            std::cout << j << "." << options[j] << "\n";
+            std::cout << j+1 << "." << options[j] << "\n";
         }
         std::cout << "Press 'Y' key to show the answer\n";
         KeyPress('y');
@@ -73,6 +72,7 @@ void Deck::reviewDeck() const {
         std::system("clear"); // to clear the console after the review is done
     }
     std::cout << "Congratulations! You have finished the deck for now!\n";
+    std::this_thread::sleep_for(std::chrono::seconds(2));
 }
 
 int Deck::getNumFlist() const
@@ -128,7 +128,47 @@ void Deck::addChoicecard(const ChoiceCard &c) {
     clist[number_of_cards_clist++] = c;
 }
 
-void Deck::browseCards()
+std::string Deck::getQuestionAtFlist(int position) const{
+    return flist[position].getqu();
+}
+std::string Deck::getQuestionAtClist(int position) const{
+    return clist[position].getqu();
+}
+bool Deck::removeCard(int position)
+{
+    if (position < number_of_cards_flist)
+    {
+        Flashcard *newlist = new Flashcard[capacity_flist];
+        for (int i = 0, j = 0; i < number_of_cards_flist; i++)
+        {
+            if (i != position) // Skip the card at the given position
+            {
+                newlist[j++] = flist[i];
+            }
+        }
+        delete[] flist;
+        flist = newlist;
+        number_of_cards_flist--;
+        return true;
+    } else if (position >= number_of_cards_flist && position <number_of_cards_clist + number_of_cards_flist)
+    {
+        ChoiceCard *newlist = new ChoiceCard[capacity_clist];
+        position -= number_of_cards_flist;
+        for (int i = 0, j = 0; i < number_of_cards_clist; i++)
+        {
+        if (i != position) // Skip the card at the given position
+            {
+                newlist[j++] = clist[i];
+            }
+        }
+        delete[] clist;
+        clist = newlist;
+        number_of_cards_clist--;
+        return true;
+    }
+    return false;
+}
+void Deck::browseCards() const
 {
     int i;
     int j;
@@ -136,10 +176,12 @@ void Deck::browseCards()
     {
         std::cout << i + 1 << ".\n";
         flist[i].display();
+        std::cout << "\n";
     }
     for (j = i+1; j-i-1 < number_of_cards_clist; j++)
     {
         std::cout << j << ".\n";
-        clist[i].display();
+        clist[j-i-1].display();
+        std::cout << "\n";
     }
 }
