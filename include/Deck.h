@@ -22,6 +22,8 @@ public:
     {
         deck_title = new_title;
     }
+    std::string getQuestionAtFlist(int position) const;
+    std::string getQuestionAtClist(int position) const;
     int getNumFlist() const;
     int getNumClist() const;
     void addFlashcard(const Flashcard &f);
@@ -30,7 +32,8 @@ public:
     void increaseCapacityClist(int newCapacity);
     void shuffleCards();
     void reviewDeck() const;
-    void browseCards();
+    void browseCards() const;
+    bool removeCard(int position);
     ~Deck()
     {
         delete[] flist;

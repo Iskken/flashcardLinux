@@ -15,6 +15,10 @@ public:
         question = qu;
         answer = ans;
     }
+    Flashcard(const Flashcard &other) { //copy constructor
+        question = other.question;
+        answer = other.answer;
+    }
     std::string getqu() const
     {
         return question;
@@ -44,9 +48,16 @@ public:
     ChoiceCard(const std::string &qu, const std::string &ans, const std::vector <std::string> &opt):Flashcard(qu, ans),
     options(opt) {}
     
+    ChoiceCard(const ChoiceCard &other) : Flashcard(other) {
+        options = other.options;
+    }
     std::vector <std::string> getChoices() const
     {
         return options;
+    }
+    void clearOptions()
+    {
+        options.clear();
     }
     void addChoice(std::string choice)
     {
@@ -102,7 +113,7 @@ public:
         int i = 1;
         for (std::string ch : options)
         {
-            std::cout << i << "." << ch << "\n"; 
+            std::cout << i << ")" << ch << "\n"; 
             i++;
         }
     }

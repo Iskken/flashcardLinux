@@ -14,4 +14,4 @@ public:
 };
 
 
-#endif // CUSTOMEXCEPTION_H
+#endif
