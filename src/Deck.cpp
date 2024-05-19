@@ -17,10 +17,10 @@ Deck::Deck(const std::string &title)
 
 Deck& Deck::operator=(const Deck &other) { //we need it for erase function to work properly 
         if (this == &other) {
-            return *this; // handle self-assignment
+            return *this; 
         }
 
-        // Clean up existing resources
+        //delete previous data
         delete[] flist;
         delete[] clist;
 
