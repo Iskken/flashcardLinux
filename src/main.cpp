@@ -237,7 +237,7 @@ void deleteDeck(DatabaseHandler &db, std::vector <Deck> &decks)
         }
     }
     std::string qu = decks[option-1].getTitle();
-    deckId = db.getDeckId(deckTitle.c_str());
+    deckId = db.getDeckId(qu.c_str());
     decks.erase(decks.begin() + (option-1)); //the erase() function should call the destructor of Deck
     try{
         if (!db.deleteDeck(deckId))
