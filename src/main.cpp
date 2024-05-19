@@ -292,8 +292,8 @@ void deleteCard(DatabaseHandler &db, std::vector <Deck> &decks)
         }
     }
     validOption = false;
-    const char * deckTitle = decks[option-1].getTitle().c_str();
-    deckId = db.getDeckId(deckTitle);
+    std::string deckTitle = decks[option-1].getTitle();
+    deckId = db.getDeckId(deckTitle.c_str());
     if (decks[option-1].getNumClist() == 0 && decks[option-1].getNumFlist() == 0)
     {
         std::system("clear");
