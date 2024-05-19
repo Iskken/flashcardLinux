@@ -236,8 +236,8 @@ void deleteDeck(DatabaseHandler &db, std::vector <Deck> &decks)
             std::cerr << "Invalid option! Please try again.\n";
         }
     }
-    const char * deckTitle = decks[option-1].getTitle().c_str();
-    deckId = db.getDeckId(deckTitle);
+    std::string qu = decks[option-1].getTitle();
+    deckId = db.getDeckId(deckTitle.c_str());
     decks.erase(decks.begin() + (option-1)); //the erase() function should call the destructor of Deck
     try{
         if (!db.deleteDeck(deckId))
