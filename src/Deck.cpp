@@ -20,12 +20,10 @@ Deck& Deck::operator=(const Deck &other) { //we need it for erase function to wo
             return *this; 
         }
 
-        //delete previous data
-        delete[] flist;
+        delete[] flist;//delete previous data
         delete[] clist;
 
-        //copying data of other object
-        deck_title = other.deck_title;
+        deck_title = other.deck_title; //copying data of other object
         number_of_cards_flist = other.number_of_cards_flist;
         number_of_cards_clist = other.number_of_cards_clist;
         capacity_flist = other.capacity_flist;
